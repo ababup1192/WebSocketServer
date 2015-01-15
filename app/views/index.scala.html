@@ -1,0 +1,45 @@
+@()(implicit request: RequestHeader)
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Notify AOJ status queue!</title>
+        <script type="text/javascript" src="//code.jquery.com/jquery-latest.min.js"></script>
+        <script type="text/javascript">
+
+        var receiveEvent = function (event) {
+        console.log("receive");
+        // var data = $.parseJSON(event.data);
+        var data = event.data;
+        if(typeof data === 'object') {
+            $('#chatMain').append ( '<p>' + data.id + " " + data.status + " " + data.time + '</p>' ) ;
+        }
+        else {
+            $ ( '#chatMain' ).append ( '<i>' + data + '</i>' ) ;
+        }
+        };
+
+        $(document).ready(function () {
+        $('#chatText').keypress(function (e) {
+        var value = $(this).val();
+        if(e.keyCode == 13 && value != ""){
+        ws.send(value);
+        $(this).val('');
+        }
+        })
+        });
+
+        //var ws = new WebSocket("ws://www5156ui.sakura.ne.jp/webSocket");
+        var ws = new WebSocket("ws://localhost:9000/webSocket");
+        ws.onmessage = receiveEvent
+
+        </script>
+    </head>
+    <body>
+        <h1>AOJ queue status</h1>
+        <div id="chatMain"></div>
+            <!-- <label for="chatText"></label><input type="text" id="chatText"/> -->
+            <!-- <input type="button" value="Send" onclick="ws.send($('#chatText').val())"/> -->
+    </body>
+</html>
